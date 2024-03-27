@@ -140,7 +140,7 @@ const embed = async (
       (await interaction.client.users.fetch(vouch.userId)).displayAvatarURL()
     );
   if (vouch.proof)
-    finalEmbed.addFields([{ name: "Proof:", value: vouch.proof.url }]);
+    finalEmbed.addFields([{ name: "Proof:", value: vouch.proof }]);
   return {
     embeds: [finalEmbed],
     components: [

@@ -95,7 +95,7 @@ export class PingCommand extends Command {
           userId: interaction.user.id,
           message,
           stars,
-          proof,
+          proof: proof ? proof.url : null,
           timestamp,
         },
       ],

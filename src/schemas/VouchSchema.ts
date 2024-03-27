@@ -2,7 +2,6 @@ import {
   Collection,
   type Client,
   type Snowflake,
-  Attachment,
 } from "discord.js";
 import type { WithId } from "mongodb";
 import { database } from "../mongo.js";
@@ -11,7 +10,7 @@ export interface VoucherData {
   userId: Snowflake;
   message: string;
   stars: number;
-  proof: Attachment | null;
+  proof: string | null;
   timestamp: number;
 }
 
