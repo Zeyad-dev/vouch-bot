@@ -21,8 +21,8 @@ export class PingCommand extends Command {
   public override registerApplicationCommands(registry: Command.Registry) {
     registry.registerChatInputCommand((command) =>
       command
-        .setName("display-vouches")
-        .setDescription("Display all vouches on this server")
+        .setName("view-vouches")
+        .setDescription("View all vouches on this server")
         .setDMPermission(false)
         .addUserOption((option) =>
           option
