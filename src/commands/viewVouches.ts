@@ -22,7 +22,7 @@ export class PingCommand extends Command {
     registry.registerChatInputCommand((command) =>
       command
         .setName("view-vouches")
-        .setDescription("view all vouches on this server")
+        .setDescription("View all vouches on this server")
         .setDMPermission(false)
         .addUserOption((option) =>
           option
@@ -152,7 +152,7 @@ const embed = async (
       (await interaction.client.users.fetch(vouch.userId)).displayAvatarURL()
     );
   if (vouch.proof)
-    finalEmbed.addFields([{ name: "Proof:", value: vouch.proof.url }]);
+    finalEmbed.addFields([{ name: "Proof:", value: vouch.proof }]);
   return {
     embeds: [finalEmbed],
     components: [
