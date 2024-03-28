@@ -21,8 +21,8 @@ export class PingCommand extends Command {
   public override registerApplicationCommands(registry: Command.Registry) {
     registry.registerChatInputCommand((command) =>
       command
-        .setName("display-vouches")
-        .setDescription("Display all vouches on this server")
+        .setName("view-vouches")
+        .setDescription("view all vouches on this server")
         .setDMPermission(false)
         .addUserOption((option) =>
           option
@@ -92,13 +92,25 @@ export class PingCommand extends Command {
             ),
         ],
       });
-
     if (userOption)
       vouches = vouches.filter((vouch) => vouch.userId == userOption.id);
     if (starsOption)
       vouches = vouches.filter((vouch) => vouch.stars == starsOption);
     if (proofOption) vouches = vouches.filter((vouch) => vouch.proof);
-
+    if (vouches.length === 0) {
+      return interaction.editReply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Red)
+            .setDescription(
+              `${formatEmoji(
+                "1221828309743046677",
+                true
+              )} | There are no vouches to show with your specified filters!`
+            ),
+        ],
+      });
+    }
     let currentCount = 0;
     const message = await interaction.editReply(
       await embed(interaction, vouches, currentCount)

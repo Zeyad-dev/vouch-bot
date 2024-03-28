@@ -14,7 +14,6 @@ const intents = [
 ];
 
 const client = new SapphireClient<true>({
-  allowedMentions: { parse: [], repliedUser: true },
   intents,
 });
 
