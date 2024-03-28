@@ -179,19 +179,21 @@ export class PingCommand extends Command {
           (menu as UserSelectMenuComponent).toJSON()
         ).setDisabled(true)
       );
-      await message.edit({
-        components: [
-          new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
-            roleSelectMenu
-          ),
-          new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
-            userSelectMenu
-          ),
-          new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
-            buttons
-          ),
-        ],
-      });
+      try {
+        await message.edit({
+          components: [
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
+              roleSelectMenu
+            ),
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
+              userSelectMenu
+            ),
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().setComponents(
+              buttons
+            ),
+          ],
+        });
+      } catch (err) {}
     });
   }
 }

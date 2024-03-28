@@ -321,9 +321,11 @@ const createTicket = async (
     ],
     ephemeral: true,
   });
-  interaction.message.edit({
-    components: interaction.message.components,
-  });
+  try {
+    interaction.message.edit({
+      components: interaction.message.components,
+    });
+  } catch (err) {}
   const ticketData = {
     userId: interaction.user.id,
     type,
