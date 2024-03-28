@@ -394,9 +394,7 @@ const changePermissions = async (
         id: interaction.user.id,
         deny: PermissionsBitField.Flags.ViewChannel,
       });
-  if (schema.raw.userManagers || schema.raw.roleManagers) {
-    await channel.edit({
-      permissionOverwrites,
-    });
-  }
+  await channel.edit({
+    permissionOverwrites,
+  });
 };
