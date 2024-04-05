@@ -223,6 +223,7 @@ const startCollector = (
   });
   collector.on("end", async (_c, reason) => {
     if (reason == "changed") return;
+    if (!message.components[0]) return;
     const buttons = message.components[0].components.map((component) => {
       return new ButtonBuilder(
         (component as ButtonComponent).toJSON()

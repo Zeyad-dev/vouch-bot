@@ -1,6 +1,7 @@
 import { Listener } from "@sapphire/framework";
 import {
   ActionRowBuilder,
+  AutocompleteInteraction,
   BaseInteraction,
   ButtonBuilder,
   ButtonInteraction,
@@ -20,6 +21,7 @@ import {
 } from "discord.js";
 import { Tickets, TicketsSchema } from "../schemas/TicketsSchema";
 import * as sourcebin from "sourcebin";
+import { Presence } from "../schemas/BotPresence";
 export class ReadyListener extends Listener<Events.InteractionCreate> {
   public constructor(
     context: Listener.LoaderContext,
@@ -33,7 +35,10 @@ export class ReadyListener extends Listener<Events.InteractionCreate> {
   }
 
   public async run(
-    interaction: StringSelectMenuInteraction | ButtonInteraction
+    interaction:
+      | StringSelectMenuInteraction
+      | ButtonInteraction
+      | AutocompleteInteraction
   ) {
     const schema = await TicketsSchema.find(
       interaction.client,
@@ -289,6 +294,17 @@ export class ReadyListener extends Listener<Events.InteractionCreate> {
         }, 10000);
       }
     }
+    if (interaction.isAutocomplete()) {
+      const focused = interaction.options.getFocused();
+      const presenceSchema = await Presence.find(interaction.client);
+      if (!presenceSchema) return;
+      const filteredStatuses = presenceSchema.raw.previousActivities.filter(
+        (status) => status.startsWith(focused)
+      );
+      await interaction.respond(
+        filteredStatuses.map((status) => ({ name: status, value: status }))
+      );
+    }
   }
 }
 
@@ -364,7 +380,7 @@ const createTicket = async (
   });
 };
 
-const changePermissions = async (
+export const changePermissions = async (
   interaction: BaseInteraction,
   schema: TicketsSchema,
   channel: TextChannel,
