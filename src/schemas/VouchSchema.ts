@@ -1,56 +1,40 @@
-import {
-  Collection,
-  type Client,
-  type Snowflake,
-} from "discord.js";
-import type { WithId } from "mongodb";
-import { database } from "../mongo.js";
+import { Collection, type Client, type Snowflake } from 'discord.js';
+import type { WithId } from 'mongodb';
+import { database } from '../mongo.js';
 
-export interface VoucherData {
+export interface VouchData {
   userId: Snowflake;
   message: string;
-  stars: number;
+  rating: number;
   proof: string | null;
-  timestamp: number;
+  vouchedOn: number;
+  targetUserId: Snowflake | null;
 }
 
 interface RawVouchSchema {
   guildId: Snowflake;
-  vouches?: VoucherData[];
-  channel?: Snowflake;
+  guildVouches: {
+    channel: Snowflake | null;
+    vouches: VouchData[];
+  };
+  userVouches: {
+    channel: Snowflake | null;
+    vouches: VouchData[];
+  };
 }
 
-const vouchSystem = database.collection<RawVouchSchema>("vouchSystem");
+const vouchSystem = database.collection<RawVouchSchema>('vouchSystem');
 
 export class VouchSchema {
   private constructor(
     public readonly client: Client<true>,
-    public readonly raw: WithId<RawVouchSchema>
+    public readonly raw: WithId<RawVouchSchema>,
   ) {}
-
-  public async addVouch(data: RawVouchSchema): Promise<this> {
-    if (!this.raw.vouches?.length) {
-      return this.update(data);
-    } else {
-      this.raw.vouches?.push(data.vouches![0]);
-      await vouchSystem.replaceOne({ _id: this.raw._id }, this.raw);
-
-      return this;
-    }
-  }
-
-  //   public async updateVouchChannel(data: TextChannel): Promise<this> {
-  //     this.raw.channel = data;
-  //     console.log(this.raw)
-  //     await vouchSystem.updateOne({ _id: this.raw._id }, this.raw);
-
-  //     return this;
-  //   }
 
   public async update(data: Partial<RawVouchSchema>): Promise<this> {
     await vouchSystem.updateOne(
       { _id: this.raw._id },
-      { $set: Object.assign(this.raw, data) }
+      { $set: Object.assign(this.raw, data) },
     );
 
     return this;
@@ -58,7 +42,7 @@ export class VouchSchema {
 
   public static async find(
     client: Client<true>,
-    guildId: Snowflake
+    guildId: Snowflake,
   ): Promise<VouchSchema | null> {
     if (this.cache.has(guildId)) return this.cache.get(guildId)!;
 
@@ -75,7 +59,7 @@ export class VouchSchema {
 
   public static async create(
     client: Client<true>,
-    data: RawVouchSchema
+    data: RawVouchSchema,
   ): Promise<VouchSchema> {
     if (this.cache.has(data.guildId)) return this.cache.get(data.guildId)!;
 
@@ -92,7 +76,7 @@ export class VouchSchema {
 
   public static async get(
     client: Client<true>,
-    data: RawVouchSchema
+    data: RawVouchSchema,
   ): Promise<VouchSchema> {
     return (
       (await this.find(client, data.guildId)) ??

@@ -1,36 +1,39 @@
 {
-    "include": ["src/**/*.ts"],
-    "compilerOptions": {
-        // Type Checking
-        "allowUnreachableCode": false,
-        "allowUnusedLabels": false,
-        "exactOptionalPropertyTypes": true,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitOverride": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "strict": true,
+  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+    // Type Checking
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
 
-        // Modules
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+    // Modules
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
 
-        // Emit
-        "newLine": "lf",
-        "outDir": "dist",
+    // Emit
+    "newLine": "lf",
+    "outDir": "dist",
 
-        // Interop Constraits
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "verbatimModuleSyntax": false,
+    // Interop Constraits
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": false,
 
-        // Language and Environment
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "target": "ESNext",
-        "useDefineForClassFields": true,
+    // Language and Environment
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "ESNext",
+    "useDefineForClassFields": true,
 
-        // Completeness
-        "skipLibCheck": true
-    }
+    // Completeness
+    "skipLibCheck": true,
+
+    //for JSON support
+    "resolveJsonModule": true
+  }
 }

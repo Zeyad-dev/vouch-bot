@@ -3,4 +3,4 @@ import { MongoClient } from "mongodb";
 
 export const mongo = new MongoClient(env.MONGO_URI);
 
-export const database = mongo.db("test");
+export const database = mongo.db("vouch_bot");

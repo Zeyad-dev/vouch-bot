@@ -11,19 +11,17 @@ import {
 import { VouchSchema } from "../schemas/VouchSchema";
 import * as config from "../../config.json";
 
-export class SetVouchChannelCommand extends Command {
+export class SetupVouchesCommand extends Command {
   public override registerApplicationCommands(registry: Command.Registry) {
     registry.registerChatInputCommand((command) =>
       command
-        .setName("set-vouch-channel")
-        .setDescription("Manages the default vouch channels for this server!")
+        .setName("setup-vouches")
+        .setDescription("Setup vouches on this server")
         .setDMPermission(false)
         .addSubcommand((subcommand) =>
           subcommand
             .setName("server")
-            .setDescription(
-              "To set the channel where vouches to the server are sent",
-            )
+            .setDescription("Setup server vouches")
             .addChannelOption((option) =>
               option
                 .setName("channel")
@@ -35,9 +33,7 @@ export class SetVouchChannelCommand extends Command {
         .addSubcommand((subcommand) =>
           subcommand
             .setName("users")
-            .setDescription(
-              "To set the channel where vouches to users are sent.",
-            )
+            .setDescription("Setup user vouches")
             .addChannelOption((option) =>
               option
                 .setName("channel")
@@ -67,7 +63,11 @@ export class SetVouchChannelCommand extends Command {
       interaction.guild!.id,
     );
 
-    if (!schema)
+    if (
+      schema &&
+      interaction.options.getSubcommand() === "server" &&
+      schema?.raw.guildVouches.channel
+    )
       return await interaction.editReply({
         embeds: [
           new EmbedBuilder()
@@ -76,7 +76,33 @@ export class SetVouchChannelCommand extends Command {
               `${formatEmoji(
                 config.emojis.fail,
                 true,
-              )} | A vouching system has not been setup in this server! Please run the </setup-vouches users:1235815364148068393> or </setup-vouches server:1235815364148068393> command first!`,
+              )} | There is a vouch system setup for **${interaction.options.getSubcommand() === "server" ? "server vouches" : "user vouches"}**!`,
+            )
+            .setFooter({
+              text: `Brought to your by ${interaction.client.user.username}`,
+              iconURL: interaction.client.user.displayAvatarURL(),
+            })
+            .setAuthor({
+              name: interaction.user.username,
+              iconURL: interaction.user.displayAvatarURL(),
+            }),
+        ],
+      });
+
+    if (
+      schema &&
+      interaction.options.getSubcommand() === "user" &&
+      schema?.raw.userVouches.channel
+    )
+      return await interaction.editReply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(Colors.Red)
+            .setDescription(
+              `${formatEmoji(
+                config.emojis.fail,
+                true,
+              )} | There is a vouch system setup for **${interaction.options.getSubcommand() === "server" ? "server vouches" : "user vouches"}**!`,
             )
             .setFooter({
               text: `Brought to your by ${interaction.client.user.username}`,
@@ -90,20 +116,29 @@ export class SetVouchChannelCommand extends Command {
       });
     switch (interaction.options.getSubcommand()) {
       case "server":
-        await schema.update({
+        await VouchSchema.create(interaction.client, {
+          guildId: interaction.guild!.id,
           guildVouches: {
             channel: channel.id,
-            vouches: schema.raw.guildVouches.vouches,
+            vouches: [],
+          },
+          userVouches: {
+            channel: null,
+            vouches: [],
           },
         });
         await interaction.editReply({
           embeds: [
             new EmbedBuilder()
               .setDescription(
-                `${formatEmoji(config.emojis.success, true)} | ${channelMention(
-                  channel.id,
-                )} has been set as the vouch channel for server vouches!`,
+                `${formatEmoji(config.emojis.success, true)} | **Server vouches** has been setup in this server!`,
               )
+              .setFields([
+                {
+                  name: "Channel:",
+                  value: channelMention(channel.id),
+                },
+              ])
               .setColor(Colors.Green)
               .setFooter({
                 text: `Brought to your by ${interaction.client.user.username}`,
@@ -117,20 +152,29 @@ export class SetVouchChannelCommand extends Command {
         });
         break;
       case "users":
-        await schema.update({
+        await VouchSchema.create(interaction.client, {
+          guildId: interaction.guild!.id,
+          guildVouches: {
+            channel: null,
+            vouches: [],
+          },
           userVouches: {
             channel: channel.id,
-            vouches: schema.raw.userVouches.vouches,
+            vouches: [],
           },
         });
         await interaction.editReply({
           embeds: [
             new EmbedBuilder()
               .setDescription(
-                `${formatEmoji(config.emojis.success, true)} | ${channelMention(
-                  channel.id,
-                )} has been set as the vouch channel for user vouches!`,
+                `${formatEmoji(config.emojis.success, true)} | **User vouches** has been setup in this server!`,
               )
+              .setFields([
+                {
+                  name: "Channel:",
+                  value: channelMention(channel.id),
+                },
+              ])
               .setColor(Colors.Green)
               .setFooter({
                 text: `Brought to your by ${interaction.client.user.username}`,

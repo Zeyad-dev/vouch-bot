@@ -6,12 +6,12 @@ export class PingCommand extends Command {
       command
         .setName("ping")
         .setDescription("Check my latency")
-        .setDMPermission(false)
+        .setDMPermission(false),
     );
   }
 
   public override async chatInputRun(
-    interaction: Command.ChatInputCommandInteraction
+    interaction: Command.ChatInputCommandInteraction,
   ) {
     const msg = await interaction.reply({
       content: "Ping?",
@@ -23,7 +23,7 @@ export class PingCommand extends Command {
     const ping = this.container.client.ws.ping;
 
     await interaction.editReply(
-      `Pong 🏓! (Round trip took: ${diff}ms. Heartbeat: ${ping}ms.)`
+      `Pong 🏓! (Round trip took: ${diff}ms. Heartbeat: ${ping}ms.)`,
     );
   }
 }
